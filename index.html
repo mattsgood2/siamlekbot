@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Siamlekbot — WhatsApp booking automation for restaurants & hotels</title>
+<meta name="description" content="Siamlekbot turns WhatsApp into a 24/7 booking line for restaurants and hotels — taking bookings, confirming guests, sending reminders and cutting no-shows automatically. No app to download. No aggregator commission." />
+
+<!-- Sales WhatsApp number is set to 447490807643. To change it later, swap every "wa.me/447490807643" link below. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#14110b;
+    --ink-2:#1c1810;
+    --panel:#211c13;
+    --cream:#f3ead9;
+    --cream-dim:#c5b69c;
+    --gold:#cda434;
+    --gold-bright:#e8c95f;
+    --green:#1fa855;
+    --green-dark:#178043;
+    --line:rgba(205,164,52,.18);
+    --maxw:1140px;
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:"Hanken Grotesk",sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* atmosphere */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 78% -8%, rgba(205,164,52,.14), transparent 60%),
+      radial-gradient(700px 500px at 8% 18%, rgba(31,168,85,.07), transparent 55%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px;position:relative;z-index:1}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:"Fraunces",serif;font-weight:500;line-height:1.05;letter-spacing:-.01em}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;gap:.55em;font-weight:600;font-size:16px;
+    padding:14px 24px;border-radius:999px;border:1px solid transparent;cursor:pointer;
+    transition:transform .18s ease, box-shadow .25s ease, background .2s ease;white-space:nowrap}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-wa{background:var(--green);color:#fff;box-shadow:0 10px 30px -10px rgba(31,168,85,.6)}
+  .btn-wa:hover{background:var(--green-dark);box-shadow:0 16px 40px -12px rgba(31,168,85,.7)}
+  .btn-ghost{background:transparent;color:var(--cream);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold-bright)}
+  .wa-ico{width:19px;height:19px;flex:none}
+
+  /* header */
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);
+    background:rgba(20,17,11,.72);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:"Fraunces",serif;font-size:21px;font-weight:600;letter-spacing:-.02em}
+  .brand b{color:var(--gold-bright);font-weight:600}
+  .mark{width:30px;height:30px;flex:none}
+  .nav-links{display:flex;align-items:center;gap:28px}
+  .nav-links a.txt{font-size:15px;color:var(--cream-dim);transition:color .2s}
+  .nav-links a.txt:hover{color:var(--gold-bright)}
+  @media(max-width:780px){.nav-links a.txt{display:none}}
+
+  /* hero */
+  .hero{padding:78px 0 64px;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+  @media(max-width:900px){.hero{grid-template-columns:1fr;padding:54px 0 40px}}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--gold);border:1px solid var(--line);
+    padding:7px 14px;border-radius:999px;margin-bottom:26px}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(31,168,85,.18)}
+  .hero h1{font-size:clamp(2.7rem,6vw,4.4rem)}
+  .hero h1 em{font-style:italic;color:var(--gold-bright)}
+  .hero p.lead{margin-top:22px;font-size:1.18rem;color:var(--cream-dim);max-width:30em}
+  .hero .cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
+  .hero .micro{margin-top:18px;font-size:14px;color:var(--cream-dim)}
+  .hero .micro b{color:var(--cream)}
+
+  /* phone mockup */
+  .phone{justify-self:center;width:300px;max-width:100%;background:#0d0b07;border-radius:34px;
+    padding:14px;border:1px solid var(--line);
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.8), 0 0 0 1px rgba(232,201,95,.08) inset}
+  .phone .screen{background:linear-gradient(180deg,#0f150f,#0c120c);border-radius:24px;padding:16px 13px;overflow:hidden}
+  .ptop{display:flex;align-items:center;gap:9px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:14px}
+  .pavatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#9a7820);display:flex;align-items:center;justify-content:center;flex:none}
+  .pname{font-size:14px;font-weight:700}
+  .pstat{font-size:11px;color:#7fd6a0}
+  .bubble{max-width:84%;padding:9px 12px;border-radius:14px;font-size:13.5px;line-height:1.45;margin-bottom:9px;position:relative}
+  .b-in{background:#23282a;border-top-left-radius:4px}
+  .b-out{background:#0a5c34;border-top-right-radius:4px;margin-left:auto;color:#eafff1}
+  .b-time{display:block;font-size:9.5px;opacity:.6;text-align:right;margin-top:3px}
+  .quick{display:flex;gap:7px;margin-top:4px}
+  .qbtn{flex:1;text-align:center;font-size:12px;font-weight:600;padding:8px;border-radius:10px;background:rgba(255,255,255,.05);color:#9ad9b3;border:1px solid rgba(154,217,179,.25)}
+
+  /* section scaffold */
+  section{padding:74px 0;position:relative}
+  .sec-eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  .sec-title{font-size:clamp(2rem,4.4vw,3rem)}
+  .sec-title em{font-style:italic;color:var(--gold-bright)}
+  .divider{height:1px;background:var(--line)}
+
+  /* stats / leakage */
+  .leak{background:linear-gradient(180deg,var(--ink-2),var(--ink))}
+  .leak .sub{color:var(--cream-dim);max-width:40em;margin-top:16px;font-size:1.08rem}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:46px}
+  @media(max-width:740px){.stats{grid-template-columns:1fr}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:30px 26px}
+  .stat .n{font-family:"Fraunces",serif;font-size:2.6rem;color:var(--gold-bright);line-height:1}
+  .stat .l{margin-top:12px;color:var(--cream-dim);font-size:.98rem}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
+  @media(max-width:900px){.steps{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.steps{grid-template-columns:1fr}}
+  .step{padding:28px 24px;border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);position:relative;overflow:hidden}
+  .step .num{font-family:"Fraunces",serif;font-style:italic;font-size:1.1rem;color:var(--gold);margin-bottom:14px}
+  .step h3{font-size:1.18rem;margin-bottom:8px}
+  .step p{color:var(--cream-dim);font-size:.97rem}
+
+  /* markets */
+  .markets{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:48px}
+  @media(max-width:820px){.markets{grid-template-columns:1fr}}
+  .mkt{padding:38px 34px;border-radius:22px;border:1px solid var(--line);background:var(--panel)}
+  .mkt .tag{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+  .mkt h3{font-size:1.75rem;margin:12px 0 6px}
+  .mkt .ml{color:var(--cream-dim);margin-bottom:20px}
+  .mkt ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .mkt li{display:flex;gap:11px;align-items:flex-start;font-size:.99rem}
+  .mkt li svg{flex:none;margin-top:4px}
+
+  /* pricing */
+  .ptoggle{display:inline-flex;background:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:5px;margin-top:30px;gap:4px}
+  .ptoggle button{font-family:"Hanken Grotesk";font-size:15px;font-weight:600;color:var(--cream-dim);
+    background:transparent;border:none;padding:10px 22px;border-radius:999px;cursor:pointer;transition:.2s}
+  .ptoggle button.on{background:var(--gold);color:#1a160d}
+  .setup-note{margin-top:22px;color:var(--cream-dim);font-size:.98rem}
+  .setup-note b{color:var(--gold-bright)}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:30px}
+  @media(max-width:860px){.tiers{grid-template-columns:1fr}}
+  .tier{background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);padding:32px 28px;display:flex;flex-direction:column}
+  .tier.feat{border-color:var(--gold);box-shadow:0 24px 60px -28px rgba(205,164,52,.45);position:relative}
+  .tier.feat::before{content:"Most popular";position:absolute;top:-12px;left:28px;background:var(--gold);color:#1a160d;
+    font-size:12px;font-weight:700;letter-spacing:.05em;padding:5px 13px;border-radius:999px}
+  .tier .tname{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+  .tier .price{font-family:"Fraunces",serif;font-size:2.7rem;margin:14px 0 2px;line-height:1}
+  .tier .price span{font-family:"Hanken Grotesk";font-size:1rem;color:var(--cream-dim);font-weight:500}
+  .tier ul{list-style:none;margin:22px 0 26px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .tier li{display:flex;gap:10px;font-size:.95rem;color:var(--cream-dim)}
+  .tier li svg{flex:none;margin-top:4px}
+  .tier .btn{justify-content:center;width:100%}
+  .pricing[data-market="hotel"] .uk{display:none}
+  .pricing[data-market="restaurant"] .th{display:none}
+
+  /* final cta */
+  .final{text-align:center;background:linear-gradient(180deg,var(--ink),var(--ink-2))}
+  .final h2{font-size:clamp(2.1rem,5vw,3.4rem)}
+  .final p{color:var(--cream-dim);max-width:34em;margin:18px auto 32px;font-size:1.12rem}
+
+  footer{border-top:1px solid var(--line);padding:40px 0;color:var(--cream-dim);font-size:.92rem}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+  .foot .brand{font-size:18px;color:var(--cream)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease, transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+</style>
+</head>
+<body>
+
+<!-- decorative lotus mark, reused -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="lotus" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 40c-9 0-16-5-16-12 4 1 7 3 9 6"/>
+      <path d="M24 40c9 0 16-5 16-12-4 1-7 3-9 6"/>
+      <path d="M24 40c-5 0-9-6-9-14 4 2 7 6 9 11"/>
+      <path d="M24 40c5 0 9-6 9-14-4 2-7 6-9 11"/>
+      <path d="M24 40c0-9 0-17 0-26 4 5 4 14 0 22"/>
+      <path d="M24 36c0-8 0-16 0-22-4 6-4 15 0 22"/>
+    </g>
+  </symbol>
+</svg>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <svg class="mark" style="color:var(--gold-bright)"><use href="#lotus"/></svg>
+      Siamlek<b>bot</b>
+    </a>
+    <nav class="nav-links">
+      <a class="txt" href="#how">How it works</a>
+      <a class="txt" href="#markets">Who it's for</a>
+      <a class="txt" href="#pricing">Pricing</a>
+      <a class="btn btn-wa" href="https://wa.me/447490807643?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20Siamlekbot">
+        <svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.3.1.2.1.8-.1 1.3Z"/></svg>
+        Talk to us
+      </a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<div class="wrap">
+  <section class="hero" style="padding-top:78px">
+    <div>
+      <span class="eyebrow reveal in"><span class="dot"></span> Bookings on WhatsApp &amp; LINE</span>
+      <h1 class="reveal in d1">Turn WhatsApp into your <em>front desk.</em></h1>
+      <p class="lead reveal in d2">Siamlekbot takes bookings, answers questions, confirms guests and sends reminders that cut no-shows — automatically, on the app your guests already have. No download for them. No commission to the aggregators.</p>
+      <div class="cta reveal in d3">
+        <a class="btn btn-wa" href="https://wa.me/447490807643?text=Hi%2C%20I%27d%20like%20a%20Siamlekbot%20demo">
+          <svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.3.1.2.1.8-.1 1.3Z"/></svg>
+          Book a demo
+        </a>
+        <a class="btn btn-ghost" href="#pricing">See pricing</a>
+      </div>
+      <p class="micro reveal in d4">Live pilot: <b>Mantanah Thai</b> · Set up in days, not months</p>
+    </div>
+
+    <div class="phone reveal in d2">
+      <div class="screen">
+        <div class="ptop">
+          <div class="pavatar"><svg width="20" height="20" style="color:#1a160d"><use href="#lotus"/></svg></div>
+          <div>
+            <div class="pname">Mantanah Thai</div>
+            <div class="pstat">● online</div>
+          </div>
+        </div>
+        <div class="bubble b-in">Hi! Do you have a table for 4 on Friday at 7?<span class="b-time">18:02</span></div>
+        <div class="bubble b-out">Yes — Friday 7:00pm for 4 is available. Shall I book it under your name?<span class="b-time">18:02 ✓✓</span></div>
+        <div class="bubble b-in">Yes please, James<span class="b-time">18:03</span></div>
+        <div class="bubble b-out">Booked, James — see you Friday at 7pm 🎉 We'll send a reminder on the day.<span class="b-time">18:03 ✓✓</span></div>
+        <div class="bubble b-out" style="background:#1c1c1c;color:var(--cream)">Reminder: your table is tonight at 7pm. Still coming?
+          <div class="quick"><div class="qbtn">Confirm</div><div class="qbtn">Cancel</div></div>
+          <span class="b-time">15:00 ✓✓</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="divider"></div>
+
+<!-- leakage -->
+<section class="leak" id="why">
+  <div class="wrap">
+    <div class="sec-eyebrow reveal">Stop the leakage</div>
+    <h2 class="sec-title reveal d1">Your regulars are costing you a <em>fortune.</em></h2>
+    <p class="sub reveal d2">Every booking through a delivery app or OTA hands over a slice you never get back — and every no-show is a table or room you can't resell. Siamlekbot moves those bookings to a channel you own, and chases the no-shows before they happen.</p>
+    <div class="stats">
+      <div class="stat reveal d1"><div class="n">14–35%</div><div class="l">Typical commission aggregators take on each order — on customers who'd happily book direct.</div></div>
+      <div class="stat reveal d2"><div class="n">~2%</div><div class="l">All-in cost to take a deposit or payment direct — versus 14–35% to the apps. You keep the rest.</div></div>
+      <div class="stat reveal d3"><div class="n">0</div><div class="l">Apps your guests need to install. They already have WhatsApp — and LINE, for hotels.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- how -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-eyebrow reveal">How it works</div>
+    <h2 class="sec-title reveal d1">Hands-off, start to finish.</h2>
+    <div class="steps">
+      <div class="step reveal d1"><div class="num">01</div><h3>Guest messages you</h3><p>A guest sends a WhatsApp to your number — from a QR code, your site, or your bio. 24/7, no staff needed.</p></div>
+      <div class="step reveal d2"><div class="num">02</div><h3>The bot takes it</h3><p>Date, party size, the details — and it answers questions about your menu, hours or rooms in natural language.</p></div>
+      <div class="step reveal d3"><div class="num">03</div><h3>Confirm &amp; remind</h3><p>An instant confirmation, then a reminder before the booking. One tap to confirm or cancel — so no-shows drop.</p></div>
+      <div class="step reveal d4"><div class="num">04</div><h3>Your team's in the loop</h3><p>Staff get an instant alert on every booking, and everything's logged automatically in your own spreadsheet.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- markets -->
+<section id="markets">
+  <div class="wrap">
+    <div class="sec-eyebrow reveal">Who it's for</div>
+    <h2 class="sec-title reveal d1">Built for <em>restaurants</em> and <em>hotels.</em></h2>
+    <div class="markets">
+      <div class="mkt reveal d1">
+        <div class="tag">UK Restaurants</div>
+        <h3>Fill more tables, lose fewer.</h3>
+        <p class="ml">A 24/7 booking line that pays for itself.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> WhatsApp bookings &amp; instant confirmations</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> AI answers to menu, hours &amp; allergen questions</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Reminders with one-tap confirm / cancel</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> No-show reporting &amp; deposit collection for big parties</li>
+        </ul>
+      </div>
+      <div class="mkt reveal d2">
+        <div class="tag">Thailand Hotels</div>
+        <h3>Take direct bookings, skip the OTAs.</h3>
+        <p class="ml">WhatsApp <i>and</i> LINE, in one bot.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Direct room bookings on WhatsApp &amp; LINE</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Deposits to cut no-shows — and bypass 15–20% OTA fees</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Pre-arrival upsells: transfers, upgrades, breakfast</li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold-bright)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Poolside &amp; room-service ordering, post-stay reviews</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- pricing -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-eyebrow reveal">Pricing</div>
+    <h2 class="sec-title reveal d1">Simple, monthly, <em>no lock-in.</em></h2>
+    <div class="ptoggle reveal d2">
+      <button class="on" data-m="restaurant">UK Restaurants (£)</button>
+      <button data-m="hotel">Thailand Hotels ($)</button>
+    </div>
+    <p class="setup-note reveal d2">One-off setup &amp; onboarding: <span class="uk-setup"><b>£750</b> — or <b>£497</b> for the first 3 clients.</span><span class="th-setup" style="display:none"><b>$800</b> — or <b>$497</b> for the first 3 clients.</span> 30-day cancellation. You own your data.</p>
+
+    <div class="pricing" data-market="restaurant">
+      <div class="tiers">
+        <!-- UK -->
+        <div class="tier uk reveal d1">
+          <div class="tname">Starter</div>
+          <div class="price">£97<span>/mo</span></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> WhatsApp bookings</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> AI Q&amp;A</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Booking confirmations</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://wa.me/447490807643?text=Hi%2C%20I%27m%20interested%20in%20the%20Starter%20plan">Choose Starter</a>
+        </div>
+        <div class="tier uk feat reveal d2">
+          <div class="tname">Pro</div>
+          <div class="price">£149<span>/mo</span></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Everything in Starter</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Reminders + one-tap confirm/cancel</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> No-show reporting</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Promotions</li>
+          </ul>
+          <a class="btn btn-wa" href="https://wa.me/447490807643?text=Hi%2C%20I%27m%20interested%20in%20the%20Pro%20plan">Choose Pro</a>
+        </div>
+        <div class="tier uk reveal d3">
+          <div class="tname">Premium</div>
+          <div class="price">£197<span>/mo</span></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Everything in Pro</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Priority support</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Monthly reports &amp; done-for-you changes</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Quarterly bot refresh</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://wa.me/447490807643?text=Hi%2C%20I%27m%20interested%20in%20the%20Premium%20plan">Choose Premium</a>
+        </div>
+
+        <!-- Thailand -->
+        <div class="tier th reveal d1">
+          <div class="tname">Starter</div>
+          <div class="price">$99<span>/mo</span></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> WhatsApp + LINE bookings</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> AI Q&amp;A</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Booking confirmations</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://wa.me/447490807643?text=Hi%2C%20I%27m%20interested%20in%20the%20hotel%20Starter%20plan">Choose Starter</a>
+        </div>
+        <div class="tier th feat reveal d2">
+          <div class="tname">Pro</div>
+          <div class="price">$179<span>/mo</span></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Everything in Starter</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Deposit collection</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Arrival reminders + confirm/cancel</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> OTA-bypass tracking</li>
+          </ul>
+          <a class="btn btn-wa" href="https://wa.me/447490807643?text=Hi%2C%20I%27m%20interested%20in%20the%20hotel%20Pro%20plan">Choose Pro</a>
+        </div>
+        <div class="tier th reveal d3">
+          <div class="tname">Premium</div>
+          <div class="price">$249<span>/mo</span></div>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Everything in Pro</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Poolside &amp; room-service ordering</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Pre-arrival upsells &amp; review requests</li>
+            <li><svg width="16" height="16" viewBox="0 0 16 16" style="color:var(--gold)"><path fill="currentColor" d="M6.2 11.3 3 8.1l1.1-1.1 2.1 2.1 5.6-5.6L13 4.6z"/></svg> Promo broadcasts &amp; monthly reports</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://wa.me/447490807643?text=Hi%2C%20I%27m%20interested%20in%20the%20hotel%20Premium%20plan">Choose Premium</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- final -->
+<section class="final" id="contact">
+  <div class="wrap">
+    <h2 class="reveal">Ready to stop the leakage?</h2>
+    <p class="reveal d1">See Siamlekbot take a live booking in under two minutes. Message us and we'll set up a demo for your venue.</p>
+    <a class="btn btn-wa reveal d2" style="font-size:18px;padding:17px 30px" href="https://wa.me/447490807643?text=Hi%2C%20I%27d%20like%20a%20Siamlekbot%20demo%20for%20my%20venue">
+      <svg class="wa-ico" style="width:22px;height:22px" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.4.3.1.2.1.8-.1 1.3Z"/></svg>
+      Message us on WhatsApp
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#top">
+      <svg class="mark" style="color:var(--gold-bright);width:24px;height:24px"><use href="#lotus"/></svg>
+      Siamlek<b style="color:var(--gold-bright)">bot</b>
+    </a>
+    <div>siamlekbot.com · WhatsApp booking automation</div>
+    <div>© <span id="yr"></span> Siamlekbot</div>
+  </div>
+</footer>
+
+<script>
+  // pricing toggle
+  document.querySelectorAll('.ptoggle button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.ptoggle button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      const m=b.dataset.m;
+      document.querySelector('.pricing').dataset.market=m;
+      document.querySelector('.uk-setup').style.display = m==='restaurant'?'':'none';
+      document.querySelector('.th-setup').style.display = m==='hotel'?'':'none';
+    });
+  });
+
+  // scroll reveal
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
+
+  document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>

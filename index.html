@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Siamlekbot — Websites, booking and tools for small businesses</title>
-<meta name="description" content="Siamlekbot designs, builds and runs the software small businesses work on every day: restaurant websites and menu systems, barbershop booking and queues, and private browser-based tools." />
+<meta name="description" content="Siamlekbot designs, builds and runs the software small businesses work on every day: restaurant websites and menu systems, barbershop booking and queues, local directories, and private browser-based tools." />
 
 <!-- Contact email is siamlekbot@icloud.com. To change it later, swap every "mailto:siamlekbot@icloud.com" link below. -->
 
@@ -96,6 +96,10 @@
   .collage .c-pdf{right:0;top:38%;width:66%;transform:rotate(2.5deg)}
   .collage .c-bb{position:absolute;left:2%;bottom:-24px;z-index:2;transform:rotate(-4deg);zoom:.55}
   @media(max-width:520px){.collage .c-bb{zoom:.42}}
+  .collage .c-rpb{width:240px;zoom:.72;bottom:-50px}
+  @media(max-width:520px){.collage .c-rpb{zoom:.5}}
+  .c-rpb .screen{padding:0;background:#0d1117}
+  .c-rpb img{width:100%;height:auto;display:block}
 
   /* browser frame */
   .frame{background:#0d0b07;border:1px solid var(--line);border-radius:14px;overflow:hidden;
@@ -278,20 +282,14 @@
         <div class="bar"><i></i><i></i><i></i><span>PDF Toolkit</span></div>
         <img src="img/pdf-toolkit.webp" alt="" width="1200" height="642" />
       </div>
-      <div class="phone c-bb">
-        <div class="screen">
-          <div class="bb-top"><div class="bb-pole"><svg><use href="#pole"/></svg></div><div><div class="bb-shop">Fade Barbershop</div><div class="bb-tag">Book your chair</div></div></div>
-          <div class="bb-svc"><div><div class="bb-svcname">Skin fade</div><div class="bb-svcdur">30 min</div></div><div class="bb-price">£18</div></div>
-          <div class="bb-eyebrow" style="margin-top:14px"><span class="bb-num">2</span> Pick a time</div>
-          <div class="bb-times"><div class="bb-time">13:40</div><div class="bb-time sel">14:00</div><div class="bb-time">14:20</div><div class="bb-time">14:40</div></div>
-          <div class="bb-btn">Confirm booking</div>
-        </div>
+      <div class="phone c-bb c-rpb">
+        <div class="screen"><img src="img/realpattayabars-phone.webp" alt="" width="620" height="870" /></div>
       </div>
     </div>
   </section>
 
   <div class="proof reveal" role="list" aria-label="At a glance">
-    <div role="listitem"><b>3</b><span>products built from scratch</span></div>
+    <div role="listitem"><b>4</b><span>live products built from scratch</span></div>
     <div role="listitem"><b>1 menu</b><span>drives a restaurant's site, print and TV screen</span></div>
     <div role="listitem"><b>15</b><span>PDF tools that never upload your files</span></div>
     <div role="listitem"><b>£0</b><span>commission taken on your sales</span></div>
@@ -300,7 +298,7 @@
   <!-- WORK -->
   <section id="work" aria-labelledby="work-title">
     <div class="kicker reveal">Selected work</div>
-    <h2 id="work-title" class="sec-title reveal d1">Three businesses, three problems, <em>one way of working.</em></h2>
+    <h2 id="work-title" class="sec-title reveal d1">Four products, four problems, <em>one way of working.</em></h2>
     <p class="sec-lead reveal d2">Every one of these is a real product in day-to-day use, not a template. Here's what each one does.</p>
 
     <!-- 01 Thai Kitchen -->
@@ -419,6 +417,37 @@
           <a class="btn btn-ghost" href="mailto:siamlekbot@icloud.com?subject=BarberBot%20demo">
             <svg class="wa-ico" aria-hidden="true"><use href="#mail"/></svg> Ask for a demo
           </a>
+        </div>
+      </div>
+    </article>
+    <!-- 04 RealPattayaBars -->
+    <article class="case flip" aria-labelledby="rpb-title">
+      <div class="media reveal">
+        <div class="stack">
+          <div class="frame">
+            <div class="bar"><i></i><i></i><i></i><span>realpattayabars.com</span></div>
+            <img src="img/realpattayabars-home.webp" alt="RealPattayaBars home page: Find a Bar in Pattaya, with a search box, 642 bars listed and a most-viewed bar carousel" width="1200" height="633" loading="lazy" />
+          </div>
+          <div class="frame back" style="width:32%">
+            <div class="bar"><i></i><i></i><i></i><span>/bar/super-mao-bar</span></div>
+            <img src="img/realpattayabars-bar.webp" alt="A bar's own listing page with photo, opening hours, a Founders badge and a map" width="620" height="950" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="reveal d1">
+        <div class="num">04</div>
+        <h3 id="rpb-title">RealPattayaBars</h3>
+        <span class="type">Directory &amp; local SEO</span><span class="status">Live</span>
+        <p class="desc">A directory of real, currently open bars in Pattaya. Listings come from public map data, get checked for recent signs of life, and are approved by a person, so visitors never turn up at a bar that closed last year.</p>
+        <ul class="feat">
+          <li>642 bars listed, each with its own page built to be found on Google</li>
+          <li>Browse by 26 areas and 12 styles, or search near you, in English and Thai</li>
+          <li>Owners claim their listing for free, with paid upgrades; the first owner has already claimed</li>
+          <li>Sourcing pipeline that merges duplicates and filters out closed bars before review</li>
+        </ul>
+        <div class="tags"><span>Node.js</span><span>SQLite</span><span>Google Places</span><span>OpenStreetMap</span><span>Schema.org</span></div>
+        <div class="links">
+          <a class="btn btn-ghost" href="https://realpattayabars.com/" target="_blank" rel="noopener">Visit the live site <svg class="wa-ico" aria-hidden="true"><use href="#arrow"/></svg></a>
         </div>
       </div>
     </article>
